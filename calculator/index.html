@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>calculator</title>
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="script.js"></script>
+  </head>
+  <body>
+    <main>
+      <section class="display">
+        <div class="history">
+          <div id="hbtn" onclick="toggle()">&#x1F504;</div>
+          <ul class="history__list hide" clas>
+            <!-- list goes here -->
+          </ul>
+        </div>
+        <input value="" id="operation" readonly />
+        <input value="" id="display" autocomplete="off" autofocus placeholder="0" />
+      </section>
+      <section class="btns">
+        <input type="radio" name="mode" checked id="rad"/>
+        <label onclick="rad=true;" for="rad">Rad</label>
+        <input type="radio" name="mode" id="deg"/>
+        <label onclick="rad=false;" for="deg">Deg</label>
+        <button value="fact(" onclick="append(event)">fact</button>
+        <button value="(" onclick="append(event)">(</button>
+        <button value=")" onclick="append(event)">)</button>
+        <button onclick="bsp()">⌫</button>
+        <button class="btns__btn--clear" onclick="clearDisplay()">AC</button>
+
+        <button value="ans" onclick="storeActive=true;enableButtons()">
+          Sto
+        </button>
+        <button onclick="recallActive=true;enableButtons()">Rcl</button>
+        <button value="a" class="variable" onclick="store(event)" disabled>
+          A
+        </button>
+        <button value="b" class="variable" onclick="store(event)" disabled>
+          B
+        </button>
+        <button value="c" class="variable" onclick="store(event)" disabled>
+          C
+        </button>
+        <button value="d" class="variable" onclick="store(event)" disabled>
+          D
+        </button>
+        <button onclick="reset()">Rst</button>
+
+        <button value="%" onclick="append(event)">%</button>
+        <button value="sin(" onclick="append(event)">sin</button>
+        <button value="ln(" onclick="append(event)">ln</button>
+        <button class="btns__btn--num" value="7" onclick="append(event)">
+          7
+        </button>
+        <button class="btns__btn--num" value="8" onclick="append(event)">
+          8
+        </button>
+        <button class="btns__btn--num" value="9" onclick="append(event)">
+          9
+        </button>
+        <button value="/" onclick="append(event)">÷</button>
+
+        <button value="π" onclick="append(event)">π</button>
+        <button value="cos(" onclick="append(event)">cos</button>
+        <button value="log(" onclick="append(event)">log</button>
+        <button class="btns__btn--num" value="4" onclick="append(event)">
+          4
+        </button>
+        <button class="btns__btn--num" value="5" onclick="append(event)">
+          5
+        </button>
+        <button class="btns__btn--num" value="6" onclick="append(event)">
+          6
+        </button>
+        <button value="X" onclick="append(event)">x</button>
+
+        <button value="E" onclick="append(event)">e</button>
+        <button value="tan(" onclick="append(event)">tan</button>
+        <button value="√(" onclick="append(event)">√</button>
+        <button class="btns__btn--num" value="1" onclick="append(event)">
+          1
+        </button>
+        <button class="btns__btn--num" value="2" onclick="append(event)">
+          2
+        </button>
+        <button class="btns__btn--num" value="3" onclick="append(event)">
+          3
+        </button>
+        <button value="-" onclick="append(event)">-</button>
+
+        <button value="ans" onclick="append(event)">Ans</button>
+        <button value="exp(" onclick="append(event)">EXP</button>
+        <button value="^" onclick="append(event)">x^y</button>
+        <button class="btns__btn--num" value="0" onclick="append(event)">
+          0
+        </button>
+        <button value="." onclick="append(event)">.</button>
+        <button class="btns__btn--eql" onclick="calc()">=</button>
+        <button value="+" onclick="append(event)">+</button>
+      </section>
+    </main>
+  </body>
+</html>
