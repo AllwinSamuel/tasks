@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+   <style>
+     /* @font-face {
+      font-family: "Inter";
+      src: url("https://fonts.gstatic.com/s/inter/v18/UcCo3FwrK3iLTcviYwYZ8UA3.woff2");
+     } */
+     body{
+      font-family: "Inter" , Courier New;
+     }
+     .heading{
+       font-family: "Inter" , 'Courier New';
+     }
+   </style>
+</head>
+
+<body>
+  <h1 class="heading">This is a heading</h1>
+
+ <!-- added font-family using script -->
+  <script>
+    async function loadFont() {
+      const fontURL =
+      'https://fonts.gstatic.com/s/inter/v18/UcCo3FwrK3iLTcviYwYZ8UA3.woff2'; // Replace with your font URL
+
+      try {
+        const fontFace = new FontFace('Inter', `url(${fontURL})`);
+
+        const loadedFont = await fontFace.load();
+
+        document.fonts.add(loadedFont);
+
+        document.body.style.fontFamily = 'Inter';
+
+        console.log('Font successfully loaded and applied.');
+      } catch (error) {
+        console.error('Failed to load font:', error);
+      }
+    }
+    loadFont();
+  </script>
+</body>
+
+</html>
