@@ -251,114 +251,21 @@ function Calculator() {
   // Replace scientific functions with their computed values
   this.preprocessExpression = function (expression) {
     return (
-      expression
-      // Handles 'pi' and 'π'
+       expression
       .replace(/pi|π/gi, Math.PI.toString())
-      // Handles standalone 'e'
       .replace(/(?<!\w)e(?![\w\()])/g, Math.E.toString())
-      // Handles exponent 'E'
-      .replace(
-        /(\d+(\.\d+)?)([E]\d+)/g,
-        function (match, base, decimal, exponent) {
-          return parseFloat(base + exponent).toString();
-        }
-      )
-      // Handles number followed by 'e'
-      .replace(/(\d+(\.\d+)?)([e])/g, function (match, value) {
-        return (parseFloat(value) * Math.E).toString();
-      })
-      //handle percentages
+      .replace(/(\d+(\.\d+)?)([E]\d+)/g,function (match, base, decimal, exponent) {return parseFloat(base + exponent).toString();})
+      .replace(/(\d+(\.\d+)?)([e])/g, function (match, value) {return (parseFloat(value) * Math.E).toString();})
       .replace(/%/g, "*0.01")
-      //handle ans keyword replacemnet
-      .replace(
-        /(\d+)\s*ans/g,
-        function (match, number) {
-          return number + "*" + this.lastAnswer;
-        }.bind(this)
-      )
-      // Handle 'ans' as a standalone term or following an operator
-      .replace(
-        /(^|[+\-*/\^\(\)])\s*ans/g,
-        function (match, operator) {
-          return operator + this.lastAnswer;
-        }.bind(this)
-      )
-      // Handles sqrt
-      .replace(
-        /sqrt\(([^)]*)\)/g,
-        function (match, innerExpression) {
-          return Math.sqrt(
-            parseFloat(this.evaluate(innerExpression).result)
-          ).toString();
-        }.bind(this)
-      )
-      // Handles log10
-      .replace(
-        /log\(([^)]*)\)/g,
-        function (match, innerExpression) {
-          return Math.log10(
-            parseFloat(this.evaluate(innerExpression).result)
-          ).toString();
-        }.bind(this)
-      )
-      // Handles ln (natural log)
-      .replace(
-        /ln\(([^)]*)\)/g,
-        function (match, innerExpression) {
-          return Math.log(
-            parseFloat(this.evaluate(innerExpression).result)
-          ).toString();
-        }.bind(this)
-      )
-      // Handles sin
-      .replace(
-        /sin\(((?:[^)(]+|\((?:[^)(]+|\([^)(]*\))*\))*)\)/g,
-        function (match, innerExpression) {
-          console.log("innerrrr    " + innerExpression);
-          // Evaluate the inner expression
-          var evaluatedInner = this.evaluate(innerExpression).result;
-          return this.radian ?
-            Math.sin(parseFloat(evaluatedInner)) :
-            Math.sin((parseFloat(evaluatedInner) * Math.PI) / 180);
-        }.bind(this)
-      )
-      .replace(
-        /cos\(([^)]*)\)/g,
-        function (match, innerExpression) {
-          return this.radian ?
-            Math.cos(parseFloat(this.evaluate(innerExpression).result)) :
-            Math.cos(
-              (parseFloat(this.evaluate(innerExpression).result) *
-                Math.PI) /
-              180
-            );
-        }.bind(this)
-      )
-      .replace(
-        /tan\(([^)]*)\)/g,
-        function (match, innerExpression) {
-          return this.radian ?
-            Math.tan(parseFloat(this.evaluate(innerExpression).result)) :
-            Math.tan(
-              (parseFloat(this.evaluate(innerExpression).result) *
-                Math.PI) /
-              180
-            );
-        }.bind(this)
-      )
-      // Handles factorial
-      .replace(
-        /(\d+)!/g,
-        function (match, innerExpression) {
-          return (
-            "(" +
-            this.factorial(parseInt(this.evaluate(innerExpression).result)) +
-            ")"
-          );
-        }.bind(this)
-      )
-    );
-  };
+      .replace(/(\d+)\s*ans/g,function (match, number) {return number + "*" + this.lastAnswer;}.bind(this))
+      .replace(/(^|[+\-*/\^\(\)])\s*ans/g,function (match, operator) {return operator + this.lastAnswer;}.bind(this))
+      .replace(/sqrt\(((?:[^)(]+|\((?:[^)(]+|\([^)(]*\))*\))*)\)/g,function (match, innerExpression) {return Math.sqrt(parseFloat(this.evaluate(innerExpression).result)).toString();}.bind(this))
+      .replace(/log\(((?:[^)(]+|\((?:[^)(]+|\([^)(]*\))*\))*)\)/g,function (match, innerExpression) {return Math.log10(parseFloat(this.evaluate(innerExpression).result)).toString();}.bind(this))
+      .replace(/ln\(((?:[^)(]+|\((?:[^)(]+|\([^)(]*\))*\))*)\)/g,function (match, innerExpression) {return Math.log(parseFloat(this.evaluate(innerExpression).result)).toString();}.bind(this))
+      .replace(/sin\(((?:[^)(]+|\((?:[^)(]+|\([^)(]*\))*\))*)\)/g,function (match, innerExpression) {return this.radian ?Math.sin(parseFloat(this.evaluate(innerExpression).result)) :Math.sin((parseFloat(this.evaluate(innerExpression).result) * Math.PI) / 180);}.bind(this))
+      .replace(/cos\(((?:[^)(]+|\((?:[^)(]+|\([^)(]*\))*\))*)\)/g,function (match, innerExpression) {return this.radian ?Math.cos(parseFloat(this.evaluate(innerExpression).result)) :Math.cos((parseFloat(this.evaluate(innerExpression).result) *Math.PI) /180);}.bind(this))
+      .replace(/tan\(((?:[^)(]+|\((?:[^)(]+|\([^)(]*\))*\))*)\)/g,function (match, innerExpression) {return this.radian ?Math.tan(parseFloat(this.evaluate(innerExpression).result)) :Math.tan((parseFloat(this.evaluate(innerExpression).result) *Math.PI) /180);}.bind(this))
+      .replace(/(\d+)!/g,function (match, innerExpression) {return ("(" +this.factorial(parseInt(this.evaluate(innerExpression).result)) +")");}.bind(this)));};
   //function to push history
   this.pushHistory = function (expression, result) {
     if (
@@ -514,3 +421,4 @@ function Calculator() {
     };
   };
 }
+
