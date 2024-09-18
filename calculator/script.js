@@ -13,15 +13,9 @@ createNewCalculator(1);
 
 function createNewCalculator(id) {
   var calculator = new Calculator();
-  var container = document
-    .getElementById("calculator-template")
-    .content.cloneNode(true)
-    .querySelector(".calculator");
+  var container = document.getElementById("calculator-template").content.cloneNode(true).querySelector(".calculator");
   // Handle button clicks
-  container
-    .querySelector(".buttons")
-    .addEventListener("click", function (event) {
-      console.log(event.target.value);
+  container.querySelector(".buttons").addEventListener("click", function (event) {
       var btnValue = event.target.value;
       //returns if it is not a button
       if (!btnValue) {
@@ -132,13 +126,10 @@ function createNewCalculator(id) {
         }
     }
   }
-
-  container.querySelector(".close-btn").addEventListener("click", function () {
+   container.querySelector(".close-btn").addEventListener("click", function () {
     container.remove(); // Remove the calculator from the DOM
   });
-  container
-    .querySelector(".history__close-btn")
-    .addEventListener("click", function () {
+  container.querySelector(".history__close-btn").addEventListener("click", function () {
       history.style.display = "none"; // closes the history list
     });
   //function to generate the history list and display it
@@ -294,9 +285,10 @@ function Calculator() {
       var char = expression[i];
       if (char === "(") openParenthesesCount++;
       if (char === ")") openParenthesesCount--;
+      if (openParenthesesCount > 0)
+        throw new Error("Mismatched parentheses: Missing closing parentheses.");
     }
-    if (openParenthesesCount > 0)
-      throw new Error("Mismatched parentheses: Missing closing parentheses.");
+   
     if (openParenthesesCount < 0)
       throw new Error("Mismatched parentheses: Too many closing parentheses.");
     //check for consecutive operators
@@ -367,7 +359,7 @@ function Calculator() {
       expression = this.preprocessExpression(expression);
     }
     // Validate the processed expression
-    // this.validateExpression(expression);
+    this.validateExpression(expression);
     // Tokenize the input expression
     var tokens = expression.match(/(\d+(\.\d+)?|[\+\-\*\/\^\(\)])/g);
     if (!tokens) throw new Error("Invalid expression format.");
