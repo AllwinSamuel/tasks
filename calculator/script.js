@@ -1,55 +1,61 @@
 "use strict";
 
 var calculatorCount = 1;
-// Function to create a new calculator
-document
-  .getElementById("new-calculator-btn")
-  .addEventListener("click", function () {
-    calculatorCount++;
-    createNewCalculator(calculatorCount);
-  });
-//function to create new calculator UI
+// button to create a new calculator or that calls the createNewCalculator function
+document.getElementById("new-calculator-btn").addEventListener("click", function () {
+  calculatorCount++;
+  createNewCalculator(calculatorCount);
+});
+//initiating the UI with one calculator   
 createNewCalculator(1);
-
+//function to create new calculator UI
 function createNewCalculator(id) {
   var calculator = new Calculator();
-  var container = document
-    .getElementById("calculator-template")
-    .content.cloneNode(true)
-    .querySelector(".calculator");
+  var container = document.getElementById("calculator-template").content.cloneNode(true).querySelector(".calculator");
   // Handle button clicks
-  container
-    .querySelector(".buttons")
-    .addEventListener("click", function (event) {
-      console.log(event.target.value);
-      var btnValue = event.target.value;
-      //returns if it is not a button
-      if (!btnValue) {
-        return;
-      }
-      //switch to perform corresponding operations
-      handleKeys(btnValue);
-    });
+  container.querySelector(".buttons").addEventListener("click", function (event) {
+    var btnValue = event.target.value;
+    //returns if it is not a button
+    if (!btnValue) {
+      return;
+    }
+    //switch to perform corresponding operations
+    handleKeys(btnValue);
+  });
   //updating heading
   container.querySelector("label").innerText += " " + id;
   //display element - inputField
-  var input = container.querySelector("#inputField");
+  var input = container.querySelector(".inputField");
   //display element - operationField
-  var operationField = container.querySelector("#operationField");
+  var operationField = container.querySelector(".operationField");
   //history ul element
   var historyUl = container.querySelector(".history-list");
   //history container element
   var history = container.querySelector(".history");
-
+  //performing operations correspoding to the button's value
+  var clear = false; // flag to clear  display
   function handleKeys(btnValue) {
+    if (clear) {
+      input.value = "";
+      clear = false;
+    }
     switch (btnValue) {
       case "=":
+        if (!input.value.trim()) {
+          return;
+        }
         try {
           var result = calculator.evaluate(input.value, input, operationField);
           input.value = result.result;
           operationField.innerText = result.operation;
+          clear = true;
         } catch (error) {
-          input.value = "ERROR!" + error.message;
+          if (error.continue) {
+            alert(error.error);
+          } else {
+            input.value = "ERROR!" + error.error;
+            clear = true;
+          }
         }
         break;
 
@@ -78,14 +84,17 @@ function createNewCalculator(id) {
       case "reset":
         calculator.memory = {};
         break;
+
       case "+":
       case "-":
       case "*":
       case "/":
       case "^":
-        // Handle operators
+        //Handle operators
         if (input.value.length >= 0) {
-          if (/[+\-*\^]/.test(input.value[input.value.length - 1])) {
+          if (["*", "/"].includes(input.value[input.value.length - 1]) && btnValue === '-') {
+            input.value += btnValue;
+          } else if (/[+\-*\^/]/.test(input.value[input.value.length - 1])) {
             // Replace last operator with new operator
             input.value = input.value.slice(0, -1) + btnValue;
           } else {
@@ -122,7 +131,7 @@ function createNewCalculator(id) {
               input.value[input.value.length - 1]
             ) &&
             btnValue != ")") ||
-          (!isNaN(input.value[input.value.length - 1]) && ["e", "π", "!"].includes(btnValue))
+          (!isNaN(input.value[input.value.length - 1]) && ["e", "π"].includes(btnValue))
         ) {
           // Add '*' if the last character is a symbol or ')' and the new value is not an operator or '('
           input.value += "*" + btnValue;
@@ -132,15 +141,13 @@ function createNewCalculator(id) {
         }
     }
   }
-
   container.querySelector(".close-btn").addEventListener("click", function () {
-    container.remove(); // Remove the calculator from the DOM
+    container.remove();
+    calculatorCount--; // Remove the calculator from the DOM
   });
-  container
-    .querySelector(".history__close-btn")
-    .addEventListener("click", function () {
-      history.style.display = "none"; // closes the history list
-    });
+  container.querySelector(".history__close-btn").addEventListener("click", function () {
+    history.style.display = "none"; // closes the history list
+  });
   //function to generate the history list and display it
   function showHistory() {
     historyUl.innerHTML = "";
@@ -210,7 +217,8 @@ function createNewCalculator(id) {
     }
   });
   // Append the new calculator to the container
-  document.getElementById("calculator-container").appendChild(container);
+  document.querySelector(".calculator-container").appendChild(container);
+  input.focus();
 }
 
 function Calculator() {
@@ -227,7 +235,6 @@ function Calculator() {
     if (value.trim()) {
       this.memory[variable] = value;
       operationField.innerText = variable + "→";
-      console.log("kojikoji");
       this.storeActive = false;
     }
   };
@@ -250,114 +257,72 @@ function Calculator() {
   };
   // Replace scientific functions with their computed values
   this.preprocessExpression = function (expression) {
-    return (
-      expression
-      // Handles 'pi' and 'π'
-      .replace(/pi|π/gi, Math.PI.toString())
-      // Handles standalone 'e'
-      .replace(/(?<!\w)e(?![\w\()])/g, Math.E.toString())
-      // Handles exponent 'E'
-      .replace(
-        /(\d+(\.\d+)?)([E]\d+)/g,
-        function (match, base, decimal, exponent) {
-          return parseFloat(base + exponent).toString();
+    // Replace percentages that are not preceded by a division operator
+    function replacePercentages(expr) {
+      return expr.replace(/(?<=[\+\-\*])(?<!\d)(\d+(\.\d+)?)([\+\-\*])(\d+(\.\d+)?)(%)/g, function (match, num1, decimal1, operator, num2) {
+        var percentageValue = parseFloat(num2) / 100;
+        var result;
+        switch (operator) {
+          case '+':
+            result = (parseFloat(num1) + (parseFloat(num1) * percentageValue)).toString();
+            break;
+          case '-':
+            result = (parseFloat(num1) - (parseFloat(num1) * percentageValue)).toString();
+            break;
+          case '*':
+            result = (parseFloat(num1) * percentageValue).toString();
+            break;
+          default:
+            result = match; // Unrecognized operator
         }
-      )
-      // Handles number followed by 'e'
+        return result;
+      });
+    }
+    // Process percentages and check if more replacements are needed
+    var newExpression = replacePercentages(expression);
+    while (/(?<=[\+\-\*])(\d+(\.\d+)?)([\+\-\*])(\d+(\.\d+)?)(%)/g.test(newExpression)) {
+      newExpression = replacePercentages(newExpression);
+    }
+    return (
+      newExpression
+      .replace(/pi|π/gi, Math.PI.toString())
+      .replace(/^(\d+(\.\d+)?)%/g, function (match, num) {
+        return num + '*0.01';
+      })
+      .replace(/(?<!\w)e(?![\w\()])/g, Math.E.toString())
+      .replace(/(\d+(\.\d+)?)([E]\d+)/g, function (match, base, decimal, exponent) {
+        return parseFloat(base + exponent).toString();
+      })
       .replace(/(\d+(\.\d+)?)([e])/g, function (match, value) {
         return (parseFloat(value) * Math.E).toString();
       })
-      //handle percentages
-      .replace(/%/g, "*0.01")
-      //handle ans keyword replacemnet
-      .replace(
-        /(\d+)\s*ans/g,
-        function (match, number) {
-          return number + "*" + this.lastAnswer;
-        }.bind(this)
-      )
-      // Handle 'ans' as a standalone term or following an operator
-      .replace(
-        /(^|[+\-*/\^\(\)])\s*ans/g,
-        function (match, operator) {
-          return operator + this.lastAnswer;
-        }.bind(this)
-      )
-      // Handles sqrt
-      .replace(
-        /sqrt\(([^)]*)\)/g,
-        function (match, innerExpression) {
-          return Math.sqrt(
-            parseFloat(this.evaluate(innerExpression).result)
-          ).toString();
-        }.bind(this)
-      )
-      // Handles log10
-      .replace(
-        /log\(([^)]*)\)/g,
-        function (match, innerExpression) {
-          return Math.log10(
-            parseFloat(this.evaluate(innerExpression).result)
-          ).toString();
-        }.bind(this)
-      )
-      // Handles ln (natural log)
-      .replace(
-        /ln\(([^)]*)\)/g,
-        function (match, innerExpression) {
-          return Math.log(
-            parseFloat(this.evaluate(innerExpression).result)
-          ).toString();
-        }.bind(this)
-      )
-      // Handles sin
-      .replace(
-        /sin\(((?:[^)(]+|\((?:[^)(]+|\([^)(]*\))*\))*)\)/g,
-        function (match, innerExpression) {
-          console.log("innerrrr    " + innerExpression);
-          // Evaluate the inner expression
-          var evaluatedInner = this.evaluate(innerExpression).result;
-          return this.radian ?
-            Math.sin(parseFloat(evaluatedInner)) :
-            Math.sin((parseFloat(evaluatedInner) * Math.PI) / 180);
-        }.bind(this)
-      )
-      .replace(
-        /cos\(([^)]*)\)/g,
-        function (match, innerExpression) {
-          return this.radian ?
-            Math.cos(parseFloat(this.evaluate(innerExpression).result)) :
-            Math.cos(
-              (parseFloat(this.evaluate(innerExpression).result) *
-                Math.PI) /
-              180
-            );
-        }.bind(this)
-      )
-      .replace(
-        /tan\(([^)]*)\)/g,
-        function (match, innerExpression) {
-          return this.radian ?
-            Math.tan(parseFloat(this.evaluate(innerExpression).result)) :
-            Math.tan(
-              (parseFloat(this.evaluate(innerExpression).result) *
-                Math.PI) /
-              180
-            );
-        }.bind(this)
-      )
-      // Handles factorial
-      .replace(
-        /(\d+)!/g,
-        function (match, innerExpression) {
-          return (
-            "(" +
-            this.factorial(parseInt(this.evaluate(innerExpression).result)) +
-            ")"
-          );
-        }.bind(this)
-      )
-    );
+      .replace(/(\d+)\s*ans/g, function (match, number) {
+        return number + "*" + this.lastAnswer;
+      }.bind(this))
+      .replace(/(^|[+\-*/\^\(\)])\s*ans/g, function (match, operator) {
+        return operator + this.lastAnswer;
+      }.bind(this))
+      .replace(/sqrt\(((?:[^)(]+|\((?:[^)(]+|\([^)(]*\))*\))*)\)/g, function (match, innerExpression) {
+        return Math.sqrt(parseFloat(this.evaluate(innerExpression).result)).toString();
+      }.bind(this))
+      .replace(/log\(((?:[^)(]+|\((?:[^)(]+|\([^)(]*\))*\))*)\)/g, function (match, innerExpression) {
+        return Math.log10(parseFloat(this.evaluate(innerExpression).result)).toString();
+      }.bind(this))
+      .replace(/ln\(((?:[^)(]+|\((?:[^)(]+|\([^)(]*\))*\))*)\)/g, function (match, innerExpression) {
+        return Math.log(parseFloat(this.evaluate(innerExpression).result)).toString();
+      }.bind(this))
+      .replace(/sin\(((?:[^)(]+|\((?:[^)(]+|\([^)(]*\))*\))*)\)/g, function (match, innerExpression) {
+        return this.radian ? Math.sin(parseFloat(this.evaluate(innerExpression).result)) : Math.sin((parseFloat(this.evaluate(innerExpression).result) * Math.PI) / 180);
+      }.bind(this))
+      .replace(/cos\(((?:[^)(]+|\((?:[^)(]+|\([^)(]*\))*\))*)\)/g, function (match, innerExpression) {
+        return this.radian ? Math.cos(parseFloat(this.evaluate(innerExpression).result)) : Math.cos((parseFloat(this.evaluate(innerExpression).result) * Math.PI) / 180);
+      }.bind(this))
+      .replace(/tan\(((?:[^)(]+|\((?:[^)(]+|\([^)(]*\))*\))*)\)/g, function (match, innerExpression) {
+        return this.radian ? Math.tan(parseFloat(this.evaluate(innerExpression).result)) : Math.tan((parseFloat(this.evaluate(innerExpression).result) * Math.PI) / 180);
+      }.bind(this))
+      .replace(/(\d+)!/g, function (match, innerExpression) {
+        return ("(" + this.factorial(parseInt(this.evaluate(innerExpression).result)) + ")");
+      }.bind(this)));
   };
   //function to push history
   this.pushHistory = function (expression, result) {
@@ -376,10 +341,19 @@ function Calculator() {
   };
   // Validate the expression
   this.validateExpression = function (expression) {
+    if (!/^[\d+\-*/^().e%]+$/.test(expression)) {
+      throw ({
+        continue: false,
+        error: "Invalid input"
+      });
+    }
     // Check if the last char is an operator
     var lastChar = expression[expression.length - 1];
     if (/[\+\-\*\/\^]/.test(lastChar)) {
-      throw new Error("Expression cannot end with an operator.");
+      throw ({
+        continue: true,
+        error: "Expression cannot end with an operator."
+      });
     }
     // Check for equal parentheses
     var openParenthesesCount = 0;
@@ -387,55 +361,76 @@ function Calculator() {
       var char = expression[i];
       if (char === "(") openParenthesesCount++;
       if (char === ")") openParenthesesCount--;
+      if (openParenthesesCount < 0)
+        throw ({
+          continue: true,
+          error: "ERROR! Too many closing parentheses."
+        });
     }
     if (openParenthesesCount > 0)
-      throw new Error("Mismatched parentheses: Missing closing parentheses.");
-    if (openParenthesesCount < 0)
-      throw new Error("Mismatched parentheses: Too many closing parentheses.");
+      throw ({
+        continue: true,
+        error: "ERROR! Too many open parentheses."
+      });
     //check for consecutive operators
-    // if (/[\+\-\*\/]{2,}/.test(cleanExpression)){
-    //   throw new Error("Consecutive operators or invalid operator placement.");
-    // }
-    // if (!/^[\d+\-*/^().e%]+$/.test(expression)){
-    //   throw new Error("Invalid characters in the expression.");
-    // }
+    if (/[\+\*\/]{2,}/.test(expression)) {
+      throw ({
+        continue: false,
+        error: "Consecutive operators or invalid operator placement."
+      });
+    }
+
   };
 
   this.getPrecedence = function (op) {
     if (op === "+" || op === "-") return 1;
     if (op === "*" || op === "/") return 2;
     if (op === "^") return 3;
+    if (op === "%") return 5;
     return 0;
   };
 
   this.applyOperator = function () {
-    if (this.numbers.length < 2) {
-      throw new Error("Insufficient operands.");
-    }
     var op = this.operators.pop();
-    var b = this.numbers.pop();
-    var a = this.numbers.pop();
+    if (op == "%") {
+      var b = this.numbers.pop();
+      var a = this.numbers[this.numbers.length - 1];
+      this.numbers.push(a * (b / 100));
+    } else {
+      if (this.numbers.length < 2) {
+        throw ({
+          continue: false,
+          error: "Insufficient operands."
+        });
+      }
 
-    if (op === "/" && b === 0) {
-      throw new Error("Division by zero is not allowed.");
-    }
+      var b = this.numbers.pop();
+      var a = this.numbers.pop();
 
-    switch (op) {
-      case "+":
-        this.numbers.push(a + b);
-        break;
-      case "-":
-        this.numbers.push(a - b);
-        break;
-      case "*":
-        this.numbers.push(a * b);
-        break;
-      case "/":
-        this.numbers.push(a / b);
-        break;
-      case "^":
-        this.numbers.push(Math.pow(a, b));
-        break;
+      if (op === "/" && b === 0) {
+        throw ({
+          continue: true,
+          error: "Division by zero is not allowed."
+        });
+      }
+
+      switch (op) {
+        case "+":
+          this.numbers.push(a + b);
+          break;
+        case "-":
+          this.numbers.push(a - b);
+          break;
+        case "*":
+          this.numbers.push(a * b);
+          break;
+        case "/":
+          this.numbers.push(a / b);
+          break;
+        case "^":
+          this.numbers.push(Math.pow(a, b));
+          break;
+      }
     }
   };
 
@@ -455,16 +450,18 @@ function Calculator() {
     }
     var originalExpression = expression;
     // Preprocess the expression to replace scientific functions
-    if (/[πeE!%sin|cos|tan|sqrt|log|ln]/.test(expression)) {
-      // Preprocess the expression to replace scientific functions
-      expression = this.preprocessExpression(expression);
-    }
+    // if (/[πeE!%sin|cos|tan|sqrt|log|ln]/.test(expression)) {
+    //   // Preprocess the expression to replace scientific functions
+    expression = this.preprocessExpression(expression);
+    // }
     // Validate the processed expression
-    // this.validateExpression(expression);
+    this.validateExpression(expression);
     // Tokenize the input expression
-    var tokens = expression.match(/(\d+(\.\d+)?|[\+\-\*\/\^\(\)])/g);
-    if (!tokens) throw new Error("Invalid expression format.");
-
+    var tokens = expression.match(/(\d+(\.\d+)?|[\+\-\*\/\^\(\)%])/g);
+    if (!tokens) throw ({
+      continue: false,
+      error: "Invalid expression format."
+    });
     //loop to push tokens o to the corresponding stacks
     for (var i = 0; i < tokens.length; i++) {
       var token = tokens[i];
@@ -477,9 +474,10 @@ function Calculator() {
       } else if (token === ")") {
         // Evaluate expressions within parentheses
         this.evaluateParentheses();
-      } else if (/[\+\-\*\/\^]/.test(token)) {
+      } else if (/[\+\-\*\/\^%]/.test(token)) {
+
         // Handle operators
-        if (token === "-" && (i === 0 || tokens[i - 1] === "(")) {
+        if (token === "-" && (i === 0 || tokens[i - 1] === "(") || ["*", "/"].includes(tokens[i - 1])) {
           // Handle unary minus
           this.numbers.push(0); // or -1
           this.operators.push("-"); // or "*"
@@ -499,12 +497,13 @@ function Calculator() {
         }
       }
     }
-    // Apply remaining operators
+    //Apply remaining operators
     while (this.operators.length > 0) {
       this.applyOperator();
     }
     // Save the evaluated expression and result to history
     var result = this.numbers.pop();
+    this.lastAnswer = result;
     //pushing on to the history
     this.pushHistory(originalExpression, result);
 
