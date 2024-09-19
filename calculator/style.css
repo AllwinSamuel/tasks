@@ -3,9 +3,11 @@
   margin: 0;
   padding: 0;
 }
-:root{
-  --bg-primary:#e8eaec;
+
+:root {
+  --bg-primary: #e8eaec;
 }
+
 input,
 button,
 li {
@@ -20,21 +22,24 @@ body {
 main {
   position: relative;
   width: 350px;
-  background-color: var(--bg-primary);;
+  background-color: var(--bg-primary);
+  ;
   padding: 15px;
   border-radius: 12px;
   box-shadow: 12px 12px 32px rgba(13, 39, 80, 0.25), -10px -10px 15px white;
 }
 
-#calculator-container{
+.calculator-container {
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
-  row-gap:20px;
+  row-gap: 20px;
 }
+
 .display {
   width: 100%;
-  background-color: var(--bg-primary);;
+  background-color: var(--bg-primary);
+  ;
   height: 70px;
   border-radius: 9px;
   margin-bottom: 20px;
@@ -43,7 +48,8 @@ main {
     inset 5px 5px 8px rgba(13, 39, 80, 0.2);
 }
 
-#inputField , #operationField {
+.inputField,
+.operationField {
   width: 98%;
   height: 40%;
   text-align: right;
@@ -51,11 +57,7 @@ main {
   font-size: 1.5rem;
   padding-top: 7px;
 }
-#display {
-  height: 60%;
-  font-size: 3rem;
-  color: #0b254e;
-}
+
 section {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -72,12 +74,15 @@ button {
   color: #0b254e;
   font-weight: 700;
 }
-button:active  {
+
+button:active {
   box-shadow: inset 5px 5px 8px rgba(13, 39, 80, 0.25), -6px -6px 10px #fff;
 }
-button:hover{
+
+button:hover {
   scale: 1.1;
 }
+
 /* button:disabled {
   background-color: #f0f0f0;
   color: #a0a0a0;
@@ -88,14 +93,17 @@ button:hover{
 .btns__btn--clear {
   background-color: rgba(255, 0, 0, 0.809);
 }
+
 .btns__btn--num {
   background-color: rgb(203, 208, 214);
 }
+
 .btns__btn--eql {
   background-color: rgba(19, 167, 167, 0.8);
   box-shadow: 5px 5px 4px rgba(13, 39, 80, 0.25), -6px -6px 10px #fff;
 }
-.history{
+
+.history {
   position: absolute;
   top: 38px;
   left: 10px;
@@ -111,34 +119,39 @@ button:hover{
   border-top-left-radius: 0;
   z-index: 2;
 }
-.history__close-btn{
+
+.history__close-btn {
   margin-left: 92%;
   height: 30px;
   width: 30px;
   box-shadow: 5px 5px 8px rgba(13, 39, 80, 0.25), -6px -6px 10px #c7c4c4;
-
-
 }
-#hbtn {
+
+.hbtn {
   cursor: pointer;
   grid-column: span 7;
   height: 50px;
 }
+
 .hide {
   display: none;
 }
+
 .history {
   position: absolute;
 }
 
-.active{
-  border: 2px solid  teal;
+.active {
+  border: 2px solid teal;
 }
-#calculator-containe{
-   display: flex;
+
+.calculator-containe {
+  display: flex;
 }
-li{
-  outline: 2px solid var(--bg-primary);;
+
+li {
+  outline: 2px solid var(--bg-primary);
+  ;
   padding: 8px;
   border-radius: 5px;
   z-index: 100;
@@ -148,27 +161,34 @@ li{
   width: fit-content;
 }
 
-label{
+label {
   font-size: 25px;
   font-weight: bolder;
   vertical-align: super;
 
 }
 
-label + button{
+label+button {
   position: relative;
   height: 30px;
-  width:40px;
+  width: 40px;
   top: -10px;
-  left:45%;
+  left: 45%;
   background-color: rgba(255, 0, 0, 0.809);
 }
-#new-calculator-btn{
+
+#new-calculator-btn {
   position: absolute;
-  top:10px;
-  left:10px;
+  top: 10px;
+  left: 10px;
   height: 50px;
   width: 50px;
   background-color: rgb(232, 232, 110);
   z-index: 100;
+}
+
+.operationField{
+  width: 100%;
+  overflow: auto;
+  font-size: medium;
 }
