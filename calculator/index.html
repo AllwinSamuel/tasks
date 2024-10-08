@@ -10,74 +10,11 @@
 
 <body>
   <button id="new-calculator-btn">+</button>
-  <div class="calculator-container"></div>
-  <!-- Template for the calculator UI -->
-  <template id="calculator-template">
-    <main class="calculator">
-      <label>Calculator</label><button class="close-btn">x</button>
-      <div class="history" style="display: none">
-        <button class="history__close-btn">X</button>
-        <ul class="history-list">
-          <!-- history list goes here -->
-        </ul>
-      </div>
-      <div class="display">
-        <div class="operationField"></div>
-        <input class="inputField" placeholder="0" autocomplete="off" autofocus/>
-      </div>
-      <section class="buttons">
-        <button class="rad-btn active" value="rad">rad</button>
-        <button class="deg-btn" value="deg">deg</button>
-        <button class="par-btn" value="(">(</button>
-        <button class="par-btn" value=")">)</button>
-        <button class="op-btn" value="%">%</button>
-        <button value="bsp">⌫</button>
-        <button value="ac" class="btns__btn--clear">AC</button>
+  <div class="calculator-container" id="calculator-container">
 
-        <button class="store" value="store">str</button>
-        <button class="recall" value="recall">rcl</button>
-        <button class="var" value="W">W</button>
-        <button class="var" value="X">X</button>
-        <button class="var" value="Y">Y</button>
-        <button class="var" value="Z">Z</button>
-        <button value="reset">rst</button>
+  </div>
+  <script type="module" src="script.js"></script>
 
-        <button class="sci-btn" value="sin(">sin</button>
-        <button class="sci-btn" value="cos(">cos</button>
-        <button class="sci-btn" value="tan(">tan</button>
-        <button class="num-btn" value="1">1</button>
-        <button class="num-btn" value="2">2</button>
-        <button class="num-btn" value="3">3</button>
-        <button class="op-btn" value="/">/</button>
-
-        <button class="sci-btn" value="π">π</button>
-        <button class="sci-btn" value="log(">log</button>
-        <button class="sci-btn" value="ln(">ln</button>
-        <button class="num-btn" value="4">4</button>
-        <button class="num-btn" value="5">5</button>
-        <button class="num-btn" value="6">6</button>
-        <button class="op-btn" value="*">*</button>
-
-        <button class="sci-btn" value="sqrt(">sqrt</button>
-        <button class="sci-btn" value="e">e</button>
-        <button class="sci-btn" value="E">E</button>
-        <button class="num-btn" value="7">7</button>
-        <button class="num-btn" value="8">8</button>
-        <button class="num-btn" value="9">9</button>
-        <button class="op-btn" value="-">-</button>
-
-        <button class="sci-btn" value="!">!</button> <!-- Factorial -->
-        <button class="op-btn" value="^">^</button>
-        <button class="op-btn" value=".">.</button>
-        <button value="ans">Ans</button>
-        <button class="num-btn" value="0">0</button>
-        <button class="eval-btn" value="=">=</button>
-        <button class="op-btn" value="+">+</button>
-        <button class="show-history-btn hbtn" value="history">Show History</button>
-      </section>
-    </main>
-  </template>
-  <script src="script.js"></script>
 </body>
 
 </html>
