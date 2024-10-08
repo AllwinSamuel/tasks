@@ -1,4 +1,5 @@
 
+
 import calculator from "./CalcComponent.js";
 var newCalc;
 document.getElementById("new-calculator-btn").addEventListener("click", function () {
